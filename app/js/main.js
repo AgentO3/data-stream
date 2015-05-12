@@ -20,23 +20,26 @@ function init() {
 
 
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.z = 1250;
-    camera.position.y = 350;
+    camera.position.z = 1150;
+    //camera.position.y = 350;
     //camera.rotate.y = 90 * Math.PI / 180;
 
     this.h = 1500;
     this.w = 2500;
     this.seg = 32;
-    this.smoothingFactor = 1250;
+    this.smoothingFactor = 600;
     this.terrain = [];
+    this.terrainBuff = [];
     this.fog = 0.00089;
 
     geometry = new THREE.PlaneGeometry( this.h, this.w, this.seg, this.seg );
 
     material = new THREE.MeshBasicMaterial( { color: 0x00D0FF, wireframe: true } );
     //
-    this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, 1000);
+    this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, this.smoothingFactor);
 		this.terrain = this.terrainGeneration.diamondSquare();
+    this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, this.smoothingFactor);
+    this.terrainBuff = this.terrainGeneration.diamondSquare();
     //
     var index = 0;
     for(var i = 0; i <= this.seg; i++) {
@@ -68,8 +71,14 @@ function animate() {
 
     }, 105);
 
-    this.terrain.unshift(this.terrain[this.terrain.length - 1]);
+    this.terrain.unshift(this.terrainBuff[this.terrainBuff.length - 1]);
     this.terrain.pop();
+    this.terrainBuff.pop();
+
+    if (this.terrainBuff.length === 0) {
+      this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, this.smoothingFactor);
+      this.terrainBuff = this.terrainGeneration.diamondSquare();
+    }
 
     var index = 0;
     for(var i = 0; i <= this.seg; i++) {
@@ -87,8 +96,8 @@ function animate() {
 
 function onDocumentMouseMove(event) {
 
-    mouseX = ( event.clientX - windowHalfX ) * 2.5;
-    mouseY = ( event.clientY - windowHalfY ) * 2.5;
+    mouseX = ( event.clientX - windowHalfX ) * 1;
+    mouseY = ( event.clientY - windowHalfY ) * 1.5;
 
 
 }
@@ -97,7 +106,7 @@ function mouse() {
 
 
 				camera.position.x += ( mouseX - camera.position.x ) * .05;
-				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+				camera.position.y += ( - mouseY - camera.position.y + 500 ) * .05;
 				camera.lookAt( scene.position );
 
 }
