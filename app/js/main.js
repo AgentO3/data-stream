@@ -20,17 +20,17 @@ function init() {
 
 
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.z = 1150;
+    camera.position.z = 1200;
     //camera.position.y = 350;
     //camera.rotate.y = 90 * Math.PI / 180;
 
-    this.h = 1500;
-    this.w = 2500;
+    this.h = 2000;
+    this.w = 3000;
     this.seg = 32;
-    this.smoothingFactor = 600;
+    this.smoothingFactor = 1000;
     this.terrain = [];
     this.terrainBuff = [];
-    this.fog = 0.00089;
+    this.fog = 0.001;
 
     geometry = new THREE.PlaneGeometry( this.h, this.w, this.seg, this.seg );
 
@@ -50,11 +50,10 @@ function init() {
     }
 
     mesh = new THREE.Mesh( geometry, material );
-    //mesh.position.set( 0, -190, 0 );
     mesh.rotation.x = -Math.PI / 2;
     mesh.rotation.z = Math.PI / 2;
     scene.add( mesh );
-    scene.fog = new THREE.FogExp2(0x000000, this.fog);
+    scene.fog = new THREE.FogExp2(0x242534, this.fog);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -64,6 +63,9 @@ function init() {
 }
 
 function animate() {
+    mouse();
+    TWEEN.update();
+    renderer.render( scene, camera );
 
     setTimeout( function() {
 
@@ -89,10 +91,10 @@ function animate() {
     }
 
     mesh.geometry.verticesNeedUpdate = true;
-    mouse();
-    renderer.render( scene, camera );
+
 
 }
+
 
 function onDocumentMouseMove(event) {
 
