@@ -69,7 +69,7 @@ function animate() {
 
       requestAnimationFrame( animate );
 
-    }, 105);
+    }, 60);
 
     this.terrain.unshift(this.terrainBuff[this.terrainBuff.length - 1]);
     this.terrain.pop();
