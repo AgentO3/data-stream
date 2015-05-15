@@ -8,6 +8,13 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 
+var h = 2000;
+var w = 3000;
+var seg = 32;
+var smoothingFactor = 1000;
+var terrain = [];
+var terrainBuff = [];
+var fog = 0.001;
 
 document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
@@ -24,27 +31,19 @@ function init() {
     //camera.position.y = 350;
     //camera.rotate.y = 90 * Math.PI / 180;
 
-    this.h = 2000;
-    this.w = 3000;
-    this.seg = 32;
-    this.smoothingFactor = 1000;
-    this.terrain = [];
-    this.terrainBuff = [];
-    this.fog = 0.001;
-
-    geometry = new THREE.PlaneGeometry( this.h, this.w, this.seg, this.seg );
+    geometry = new THREE.PlaneGeometry( h, w, seg, seg );
 
     material = new THREE.MeshBasicMaterial( { color: 0x00D0FF, wireframe: true } );
     //
-    this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, this.smoothingFactor);
-		this.terrain = this.terrainGeneration.diamondSquare();
-    this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, this.smoothingFactor);
-    this.terrainBuff = this.terrainGeneration.diamondSquare();
+    terrainGeneration = new TerrainGeneration(w, h, seg, smoothingFactor);
+		terrain = terrainGeneration.diamondSquare();
+    terrainGeneration = new TerrainGeneration(w, h, seg, smoothingFactor);
+    terrainBuff = terrainGeneration.diamondSquare();
     //
     var index = 0;
-    for(var i = 0; i <= this.seg; i++) {
-        for(var j = 0; j <= this.seg; j++) {
-          geometry.vertices[index].z = this.terrain[i][j];
+    for(var i = 0; i <= seg; i++) {
+        for(var j = 0; j <= seg; j++) {
+          geometry.vertices[index].z = terrain[i][j];
             index++;
         }
     }
@@ -53,7 +52,7 @@ function init() {
     mesh.rotation.x = -Math.PI / 2;
     mesh.rotation.z = Math.PI / 2;
     scene.add( mesh );
-    scene.fog = new THREE.FogExp2(0x242534, this.fog);
+    scene.fog = new THREE.FogExp2(0x242534, fog);
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -73,24 +72,26 @@ function animate() {
 
     }, 60);
 
-    this.terrain.unshift(this.terrainBuff[this.terrainBuff.length - 1]);
-    this.terrain.pop();
-    this.terrainBuff.pop();
+    terrain.unshift(terrainBuff[terrainBuff.length - 1]);
+    terrain.pop();
+    terrainBuff.pop();
 
-    if (this.terrainBuff.length === 0) {
-      this.terrainGeneration = new TerrainGeneration(this.w, this.h, this.seg, this.smoothingFactor);
-      this.terrainBuff = this.terrainGeneration.diamondSquare();
+    if (terrainBuff.length === 0) {
+      terrainGeneration = new TerrainGeneration(w, h, seg, smoothingFactor);
+      terrainBuff = terrainGeneration.diamondSquare();
     }
 
     var index = 0;
-    for(var i = 0; i <= this.seg; i++) {
-        for(var j = 0; j <= this.seg; j++) {
-          mesh.geometry.vertices[index].z = this.terrain[i][j];
+    for(var i = 0; i <= seg; i++) {
+        for(var j = 0; j <= seg; j++) {
+          mesh.geometry.vertices[index].z = terrain[i][j];
             index++;
         }
     }
 
     mesh.geometry.verticesNeedUpdate = true;
+
+    console.log(terrain);
 
 
 }
