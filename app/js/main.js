@@ -57,7 +57,7 @@ function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
 
-    document.body.appendChild( renderer.domElement );
+    document.getElementById("data-data-mountains").appendChild( renderer.domElement );
 
 }
 
@@ -90,9 +90,6 @@ function animate() {
     }
 
     mesh.geometry.verticesNeedUpdate = true;
-
-    console.log(terrain);
-
 
 }
 
